@@ -1,5 +1,8 @@
 # Library Management System - Odoo Module
 
+RAPPORT ACADEMIQUE (LIBRARY_MANAGEMENT - Odoo) : [Uploading Rapport_Academique_Odoo_Library_Management_Final.pdf…]()
+
+
 Le Système de Gestion de Bibliothèque constitue une réponse innovante et intégrée pour moderniser l'ensemble des opérations liées à la bibliothèque. Développé au moyen du framework Odoo, cette solution complète vise à optimiser la gestion des livres, des auteurs, des catégories, des copies, des emprunts, et des éditeurs d'une manière efficace et intuitive.
 
 **The Library Management System is an innovative and integrated solution to modernize all library-related operations. Developed using the Odoo framework, this complete solution aims to optimize the management of books, authors, categories, copies, borrows, and publishers in an efficient and intuitive manner.**
