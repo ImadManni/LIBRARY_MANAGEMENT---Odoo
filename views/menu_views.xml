@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu -->
+    <menuitem id="menu_library_root"
+              name="Library"
+              sequence="10"
+              web_icon="library_management,static/description/icon.png"/>
+
+    <!-- Books Menu -->
+    <menuitem id="menu_library_books"
+              name="Books"
+              parent="menu_library_root"
+              action="action_book"
+              sequence="10"/>
+
+    <!-- Readers Menu -->
+    <menuitem id="menu_library_readers"
+              name="Readers"
+              parent="menu_library_root"
+              action="action_reader"
+              sequence="20"/>
+
+    <!-- Loans Menu -->
+    <menuitem id="menu_library_loans"
+              name="Loans"
+              parent="menu_library_root"
+              action="action_loan"
+              sequence="30"/>
+</odoo>
+

@@ -1,0 +1,250 @@
+@startuml Library Management System - Odoo Class Diagram
+!theme plain
+title Le Système de Gestion de Bibliothèque\nDiagramme de Classes Odoo\n\nDéveloppé au moyen du framework Odoo
+
+skinparam class {
+    BackgroundColor #F8F8F8
+    BorderColor #2E7D32
+    ArrowColor #1976D2
+    FontSize 10
+    AttributeFontSize 9
+    MethodFontSize 9
+}
+
+skinparam linetype ortho
+skinparam roundcorner 10
+skinparam shadowing true
+
+skinparam note {
+    BackgroundColor #FFF9C4
+    BorderColor #F57F17
+    FontSize 9
+}
+
+' ============================================
+' Author Entity (Auteur)
+' ============================================
+class Author <<Odoo Model>> {
+    .. Odoo Model Info ..
+    _name = "library.author"
+    _description = "Author"
+    ..
+    .. Primary Key ..
+    {PK} id : Integer
+    ..
+    .. Attributes ..
+    name : Char
+    date_of_birth : Date
+    image : Binary
+    age : Integer
+    salary : Float
+    email : Char
+    phone_number : Char
+    book_ids : One2many[Books_data]
+    color : Integer
+    start_date : Date
+    end_date : Date
+    ..
+    .. Methods ..
+    + get_end_date() : Date
+    + set_end_date(date: Date) : void
+    + compute_age() : Integer
+}
+
+' ============================================
+' Book_Category Entity (Catégorie de Livre)
+' ============================================
+class Book_Category <<Odoo Model>> {
+    .. Odoo Model Info ..
+    _name = "library.book.category"
+    _description = "Book Category"
+    ..
+    .. Primary Key ..
+    {PK} id : Integer
+    ..
+    .. Attributes ..
+    name : Char
+}
+
+' ============================================
+' Books_data Entity (Données de Livre)
+' ============================================
+class Books_data <<Odoo Model>> {
+    .. Odoo Model Info ..
+    _name = "library.book.data"
+    _description = "Book Data"
+    ..
+    .. Primary Key ..
+    {PK} id : Integer
+    ..
+    .. Foreign Keys ..
+    {FK} author_id : Many2one[Author]
+    {FK} category_id : Many2one[Book_Category]
+    ..
+    .. Attributes ..
+    name : Char
+    price : Float
+    image : Binary
+    language : Char
+    description : Text
+    number_of_pages : Integer
+    copy_ids : One2many[BookCopies]
+    copy_count : Integer
+    start_date : Date
+    end_date : Date
+    color : Integer
+    priority : Integer
+    version : Char
+    ispn : Char
+    invoice : Binary
+    ..
+    .. Methods ..
+    + compute_copy_count() : Integer
+    + get_end_date() : Date
+    + set_end_date(date: Date) : void
+}
+
+' ============================================
+' BookCopies Entity (Copies de Livre)
+' ============================================
+class BookCopies <<Odoo Model>> {
+    .. Odoo Model Info ..
+    _name = "library.book.copy"
+    _description = "Book Copy"
+    ..
+    .. Primary Key ..
+    {PK} id : Integer
+    ..
+    .. Foreign Keys ..
+    {FK} book_id : Many2one[Books_data]
+    ..
+    .. Attributes ..
+    name : Char
+    state : Selection
+    start_date : Date
+    end_date : Date
+    progress : Float
+    place : Char
+    ..
+    .. Methods ..
+    + get_end_date() : Date
+    + set_end_date(date: Date) : void
+    + on_change_book_id() : void
+    + compute_progress() : Float
+}
+
+' ============================================
+' Borrows Entity (Emprunts)
+' ============================================
+class Borrows <<Odoo Model>> {
+    .. Odoo Model Info ..
+    _name = "library.borrow"
+    _description = "Book Borrow"
+    ..
+    .. Primary Key ..
+    {PK} id : Integer
+    ..
+    .. Foreign Keys ..
+    {FK} book_copy_id : Many2one[BookCopies]
+    {FK} partner_id : Many2one[res.partner]
+    ..
+    .. Attributes ..
+    name : Char
+    book_id : Many2one[Books_data]
+    start_borrow : Date
+    email : Char
+    phone_number : Char
+    state : Selection
+    end_borrow : Date
+    dailyprice : Float
+    color : Integer
+    duration : Integer
+    received_date : Date
+    borrows_duration : Integer
+    sub_total : Float
+    place : Char
+    ..
+    .. Methods ..
+    + action_report() : Report
+    + states_test() : Boolean
+    + on_change_borrows_duration() : void
+    + onchange_da_test() : void
+    + ochange_book_copy_id() : void
+    + get_end_date() : Date
+    + set_end_date(date: Date) : void
+    + action_draft() : void
+    + onchange_book_id() : void
+    + onchange_dates() : void
+    + compute_sub_s_total() : Float
+}
+
+' ============================================
+' Relationships with Cardinalities
+' ============================================
+Author "1" ||--o{ "1..*" Books_data : writes\n(author_id)
+Book_Category "0..1" ||--o{ "0..*" Books_data : categorizes\n(category_id)
+Books_data "1..*" ||--o{ "1" BookCopies : has copies\n(book_id)
+BookCopies "0..*" ||--o{ "1" Borrows : borrowed in\n(book_copy_id)
+
+' ============================================
+' Entity Notes
+' ============================================
+note right of Author
+    **Author Entity (Auteur)**
+    Manages author information,
+    tracks employment dates,
+    and computes age from date of birth.
+    \n
+    **Odoo Model:** library.author
+end note
+
+note right of Books_data
+    **Books_data Entity (Données de Livre)**
+    Main book information entity.
+    Links to Author and Category.
+    Tracks physical copies and metadata.
+    \n
+    **Odoo Model:** library.book.data
+end note
+
+note right of Book_Category
+    **Book_Category Entity (Catégorie)**
+    Categorizes books for better
+    organization and search.
+    \n
+    **Odoo Model:** library.book.category
+end note
+
+note right of BookCopies
+    **BookCopies Entity (Copies)**
+    Individual physical copies of books.
+    Tracks state (available, borrowed, lost)
+    and location.
+    Computes progress/status.
+    \n
+    **Odoo Model:** library.book.copy
+end note
+
+note right of Borrows
+    **Borrows Entity (Emprunts)**
+    Loan/borrowing transactions.
+    Links to specific book copy.
+    Calculates fees, duration, and totals.
+    \n
+    **Odoo Model:** library.borrow
+end note
+
+' ============================================
+' Legend
+' ============================================
+legend right
+    |<#FFD700> {PK} | Primary Key |
+    |<#87CEEB> {FK} | Foreign Key |
+    | **1..1** | Exactly one |
+    | **1..*** | One or more |
+    | **0..1** | Zero or one |
+    | **0..*** | Zero or more |
+endlegend
+
+@enduml
+
